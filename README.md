@@ -9,7 +9,7 @@ This project is based on the tutorial here: https://www.prisma.io/blog/nestjs-pr
 - ~~Run docker: `docker-compose up`~~
 - `npm install -D prisma`
 - `npx prisma init`
-- Set postgres database url string in .env
+- Set postgres database url string in .env (REF: https://www.prisma.io/docs/concepts/database-connectors/postgresql#connection-url)
 - Model the data under prisma/schema.prisma
 - Migrate the database (this creates actual tables in the database): `npx prisma migrate dev --name "init"`
 - Create seed script (seed.ts) to generate inital database data
@@ -68,6 +68,12 @@ Providers: https://docs.nestjs.com/providers
 Injection: https://blog.devgenius.io/exploring-nest-js-dependency-injection-66a68a10acf7
 Classes: https://www.freecodecamp.org/news/javascript-classes-how-they-work-with-use-case/
 Singleton: https://www.freecodecamp.org/news/singleton-design-pattern-with-javascript/
+
+**/schema**
+### schema.prisma
+Ref:  
+https://www.prisma.io/docs/concepts/components/prisma-schema/data-model
+
 
 **/articles**
 ### articles.controllers.ts
