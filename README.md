@@ -20,14 +20,14 @@ npx nest generate module prisma
 npx nest generate service prisma
 ```
 - Install Swagger (`npm install --save @nestjs/swagger swagger-ui-express`) and set it up indside main.ts
-- Generate REST resources: (`npx nest generate resource`) for articles
-- Add Prisma to articles.module.ts and articles.service.ts
-- Define GET /articles endpoint. (You can test directly on http://localhost:3000/api)
-- Define GET /articles/drafts endpoint
-- Define GET /articles/:id endpoint
-- Define POST /articles endpoint
-- Define PATCH /articles/:id endpoint
-- Define DELETE /articles/:id endpoint
+- Generate REST resources: (`npx nest generate resource`) for posts
+- Add Prisma to posts.module.ts and posts.service.ts
+- Define GET /posts endpoint. (You can test directly on http://localhost:3000/api)
+- Define GET /posts/drafts endpoint
+- Define GET /posts/:id endpoint
+- Define POST /posts endpoint
+- Define PATCH /posts/:id endpoint
+- Define DELETE /posts/:id endpoint
 - Group endpoints together in Swagger
 - Update Swagger response types
 
@@ -75,20 +75,20 @@ Ref:
 https://www.prisma.io/docs/concepts/components/prisma-schema/data-model
 
 
-**/articles**
-### articles.controllers.ts
+**/posts**
+### posts.controllers.ts
 A controller's purpose is to receive specific requests for the application. The routing mechanism controls which controller receives which requests. Frequently, each controller has more than one route, and different routes can perform different actions.
 - Note that methods called are imported from the services file.  
-- `constructor(private readonly articlesService: ArticlesService) {}` injects the service into the class. Note that we are typing the argument with the `ArticlesService` type  
+- `constructor(private readonly postsService: PostsService) {}` injects the service into the class. Note that we are typing the argument with the `PostsService` type  
 - Note that @Req decorator doesn't need to be passed to methods such as FindAll(), Nest will automatically get the request data, because it it a GET request.
 - @Body is required for posting because the create() method needs to pass the client params to the service
 - If using Typescript you need to define the DTO (data transfer object); it will define how the data is sent over the network
-- Note that that plus symbol in `return this.articlesService.findOne(+id);` from the FindOne() method converts the string into a number
+- Note that that plus symbol in `return this.postsService.findOne(+id);` from the FindOne() method converts the string into a number
 
 *ApiTags
 Refs: https://docs.nestjs.com/controllers
 
-### articles.service.ts
+### posts.service.ts
 Ref: https://docs.nestjs.com/providers
 
 

@@ -6,8 +6,8 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  // create two dummy articles
-  const post1 = await prisma.article.upsert({
+  // create two dummy posts
+  const post1 = await prisma.post.upsert({
     where: { title: 'Prisma Adds Support for MongoDB' },
     update: {},
     create: {
@@ -19,7 +19,7 @@ async function main() {
     },
   });
 
-  const post2 = await prisma.article.upsert({
+  const post2 = await prisma.post.upsert({
     where: { title: "What's new in Prisma? (Q1/22)" },
     update: {},
     create: {

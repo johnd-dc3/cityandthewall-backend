@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "Article" (
+CREATE TABLE "Post" (
     "id" SERIAL NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
@@ -8,8 +8,8 @@ CREATE TABLE "Article" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Article_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Article_title_key" ON "Article"("title");
+CREATE UNIQUE INDEX "Post_title_key" ON "Post"("title");
