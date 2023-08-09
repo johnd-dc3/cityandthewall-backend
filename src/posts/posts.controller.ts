@@ -43,6 +43,7 @@ export class PostsController {
   }
 
   @Patch(':id')
+  @ApiOkResponse({ type: PostEntity })
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postsService.update(+id, updatePostDto);
   }

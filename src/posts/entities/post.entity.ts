@@ -2,6 +2,7 @@ import { Post } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PostEntity implements Post {
+  userId: number;
   @ApiProperty()
   id: number;
 
@@ -13,6 +14,12 @@ export class PostEntity implements Post {
 
   @ApiProperty()
   body: string;
+
+  @ApiProperty()
+  author: string;
+
+  // @ApiProperty()
+  // categories: string[];
 
   @ApiProperty()
   published: boolean;

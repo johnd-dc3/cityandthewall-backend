@@ -1,5 +1,30 @@
 This project is based on the tutorial here: https://www.prisma.io/blog/nestjs-prisma-rest-api-7D056s1BmOL0
 
+## Running the app
+
+```bash
+# development
+npm run start
+
+# swagger api (in browser)
+http://localhost:3000/api
+
+# prototype migration
+npx prisma db push
+
+# seed database
+npx prisma db seed
+
+# generate resource
+npx nest generate resource
+
+# watch mode
+npm run start:dev
+
+# production mode
+npm run start:prod
+```
+
 # Overall steps:
 ## Build REST API
 - Create empty project from CLI: `npx @nestjs/cli new <project-name>`
@@ -31,11 +56,18 @@ npx nest generate service prisma
 - Group endpoints together in Swagger
 - Update Swagger response types
 
+## Alter the database
+- Make changes to prisma.schema and push prototype via `npx prisma db push`
+- Note: Changing the name of a model requires change all related files in the application, and will drop the original tables when migrating
+- Seed with new entries
+- Add more models (e.g.: User) to prisma.schema
+- Generate resources: `npx nest generate resource`
 
 
 
 # Environment tips
 - Prevent "Delete 'CR' eslint(prettier/prettier)" lint: add `"endOfLine": "auto"` to prettier.rc
+- Word wrap shortcut: Alt + z
 - Make sure prettier config overrides settings.json by adding a .vscode/settings.json and the following lines to it:
 ```
 {
@@ -72,7 +104,8 @@ Singleton: https://www.freecodecamp.org/news/singleton-design-pattern-with-javas
 **/schema**
 ### schema.prisma
 Ref:  
-https://www.prisma.io/docs/concepts/components/prisma-schema/data-model
+Models: https://www.prisma.io/docs/concepts/components/prisma-schema/data-model
+DB Prototyping: https://www.prisma.io/docs/guides/migrate/prototyping-schema-db-push
 
 
 **/posts**
@@ -128,19 +161,6 @@ Ref: https://docs.nestjs.com/providers
 
 ```bash
 $ npm install
-```
-
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
 ```
 
 ## Test

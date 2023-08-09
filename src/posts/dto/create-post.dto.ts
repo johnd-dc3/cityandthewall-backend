@@ -10,6 +10,12 @@ export class CreatePostDto {
   @ApiProperty()
   body: string;
 
+  @ApiProperty()
+  userId: number;
+
+  // @ApiProperty()
+  // categories: string[];
+
   @ApiProperty({ required: false, default: false })
   published?: boolean = false;
 }
