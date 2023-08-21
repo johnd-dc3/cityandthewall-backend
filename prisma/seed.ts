@@ -16,7 +16,25 @@ async function main() {
     },
   });
 
-  // console.log('Upserted User:', user1);
+  const user2 = await prisma.user.upsert({
+    where: { email: 'billy@gmail.com' },
+    update: {},
+    create: {
+      email: 'billy@gmail.com',
+      name: 'billy bo',
+      password: 'password-billy',
+    },
+  });
+
+  try {
+    const cat1 = await prisma.category.create({
+      data: {
+        name: 'Travel',
+      },
+    });
+  } catch (e) {
+    console.log(e);
+  }
 
   // Note that running this query multiple times will result in error, as email as a @unique constraint
   // const newUser = await prisma.user.create({
@@ -30,24 +48,24 @@ async function main() {
   // console.log('Created user:', newUser);
 
   // Update user
-  const updatedUser = await prisma.user.update({
-    where: { email: 'johndoe@example.com' },
-    data: {
-      name: 'Updated Name',
-    },
-  });
+  // const updatedUser = await prisma.user.update({
+  //   where: { email: 'johndoe@example.com' },
+  //   data: {
+  //     name: 'Updated Name',
+  //   },
+  // });
 
-  console.log('Updated User:', updatedUser);
+  // console.log('Updated User:', updatedUser);
 
   // Read user by ID
-  const userById = await prisma.user.findUnique({
-    where: { email: 'johndoe@example.com' }, // Id of newUser above
-  });
+  // const userById = await prisma.user.findUnique({
+  //   where: { email: 'johndoe@example.com' }, // Id of newUser above
+  // });
 
   // Delete user
-  const deletedUser = await prisma.user.delete({
-    where: { email: 'johndoe@example.com' },
-  });
+  // const deletedUser = await prisma.user.delete({
+  //   where: { email: 'johndoe@example.com' },
+  // });
 
   // console.log('Deleted user:', deletedUser);
 
@@ -55,7 +73,7 @@ async function main() {
   const post1 = await prisma.post.upsert({
     where: { title: 'Prisma Adds Support for MongoDB' },
     update: {
-      authorId: 1,
+      published: false,
     },
     create: {
       title: 'Prisma Adds Support for MongoDB',
@@ -63,11 +81,10 @@ async function main() {
       description:
         "We are excited to share that today's Prisma ORM release adds stable support for MongoDB!",
       published: false,
-      authorId: 1,
     },
   });
 
-  // console.log('Post 1:', post1);
+  console.log('Post 1:', post1);
 }
 
 // execute the main function
