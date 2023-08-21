@@ -8,16 +8,26 @@ datasource db {
 }
 
 model Post {
-  id          Int        @id @default(autoincrement())
-  title       String     @unique
+  id          Int      @id @default(autoincrement())
+  title       String   @unique
   description String?
   body        String
-  author      User?      @relation(fields: [userId], references: [id])
-  published   Boolean    @default(false)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  categories  Category[]
-  userId      Int       @default(2)
+  published   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  author      User?    @relation(fields: [authorId], references: [id])
+  authorId    Int?
+  categories Category[]
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  name      String?
+  email     String    @unique
+  password  String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Posts     Post[]
 }
 
 model Category {
@@ -25,11 +35,3 @@ model Category {
   name  String @unique
   posts Post[]
 }
-
-model User {
-  id    Int    @id @default(autoincrement())
-  name  String
-  email String @unique
-  posts Post[]
-}
-

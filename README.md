@@ -56,14 +56,16 @@ npx nest generate service prisma
 - Group endpoints together in Swagger
 - Update Swagger response types
 
+## Input Validation
+- Install `npm install class-validator class-transformer`
+
+
 ## Alter the database
 - Make changes to prisma.schema and push prototype via `npx prisma db push`
 - Note: Changing the name of a model requires change all related files in the application, and will drop the original tables when migrating
 - Seed with new entries
 - Add more models (e.g.: User) to prisma.schema
 - Generate resources: `npx nest generate resource`
-
-
 
 # Environment tips
 - Prevent "Delete 'CR' eslint(prettier/prettier)" lint: add `"endOfLine": "auto"` to prettier.rc
@@ -124,7 +126,20 @@ Refs: https://docs.nestjs.com/controllers
 ### posts.service.ts
 Ref: https://docs.nestjs.com/providers
 
+### post.entity.ts
+Define and entity that Swagger can use to identify the shape of the returned entity object. Without this, the Response Description section in swagger will be blank. So for this app, that's all the entity file is doing: defining the response types.
+Ref: https://www.prisma.io/blog/nestjs-prisma-rest-api-7D056s1BmOL0 (ctrl + f "entity")
 
+Properties need to be wrapped in the ApiProperty() decorator in the entity file, and the class created in the entity file will be used in the controller file as well.
+
+Note that entities have a use even outside Swagger. They can be used to define create new instances of the response object in the controller file.
+An example might be to use serialization in the entity file to filter response results. Ref: https://docs.nestjs.com/techniques/serialization
+
+Post.entity.ts exports a **class**
+Q: How are classes used in typescript?
+
+### /dto/create-post.dto.ts
+A Data Transfer Oject is used to specify the type of data that will be sent over the network. This is where incoming data validation is assigned.
 
 
 
@@ -189,3 +204,4 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
