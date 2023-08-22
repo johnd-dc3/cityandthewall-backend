@@ -1,15 +1,80 @@
-// prisma/seed.ts
-
 import { PrismaClient } from '@prisma/client';
 
-// initialize Prisma Client
+// initialize the Prisma Client
 const prisma = new PrismaClient();
-
 async function main() {
-  // create two dummy articles
-  const post1 = await prisma.article.upsert({
-    where: { title: 'Prisma Adds Support for MongoDB' },
+  // Create methods for user
+  // This query will NOT create the user if it already exists
+  // If the user exists, it will update it
+  const user1 = await prisma.user.upsert({
+    where: { email: 'sabin@adams.com' },
     update: {},
+    create: {
+      email: 'sabin@adams.com',
+      name: 'Sabine Adams',
+      password: 'password-sabin',
+    },
+  });
+
+  const user2 = await prisma.user.upsert({
+    where: { email: 'billy@gmail.com' },
+    update: {},
+    create: {
+      email: 'billy@gmail.com',
+      name: 'billy bo',
+      password: 'password-billy',
+    },
+  });
+
+  try {
+    const cat1 = await prisma.category.create({
+      data: {
+        name: 'Travel',
+      },
+    });
+  } catch (e) {
+    console.log(e);
+  }
+
+  // Note that running this query multiple times will result in error, as email as a @unique constraint
+  // const newUser = await prisma.user.create({
+  //   data: {
+  //     name: 'John Doe',
+  //     email: 'johndoe@example.com',
+  //     password: 'password123',
+  //   },
+  // });
+
+  // console.log('Created user:', newUser);
+
+  // Update user
+  // const updatedUser = await prisma.user.update({
+  //   where: { email: 'johndoe@example.com' },
+  //   data: {
+  //     name: 'Updated Name',
+  //   },
+  // });
+
+  // console.log('Updated User:', updatedUser);
+
+  // Read user by ID
+  // const userById = await prisma.user.findUnique({
+  //   where: { email: 'johndoe@example.com' }, // Id of newUser above
+  // });
+
+  // Delete user
+  // const deletedUser = await prisma.user.delete({
+  //   where: { email: 'johndoe@example.com' },
+  // });
+
+  // console.log('Deleted user:', deletedUser);
+
+  // create dummy post
+  const post1 = await prisma.post.upsert({
+    where: { title: 'Prisma Adds Support for MongoDB' },
+    update: {
+      published: false,
+    },
     create: {
       title: 'Prisma Adds Support for MongoDB',
       body: 'Support for MongoDB has been one of the most requested features since the initial release of...',
@@ -19,19 +84,7 @@ async function main() {
     },
   });
 
-  const post2 = await prisma.article.upsert({
-    where: { title: "What's new in Prisma? (Q1/22)" },
-    update: {},
-    create: {
-      title: "What's new in Prisma? (Q1/22)",
-      body: 'Our engineers have been working hard, issuing new releases with many improvements...',
-      description:
-        'Learn about everything in the Prisma ecosystem and community from January to March 2022.',
-      published: true,
-    },
-  });
-
-  console.log({ post1, post2 });
+  console.log('Post 1:', post1);
 }
 
 // execute the main function
@@ -41,6 +94,6 @@ main()
     process.exit(1);
   })
   .finally(async () => {
-    // close Prisma Client at the end
+    // close the Prisma Client at the end
     await prisma.$disconnect();
   });

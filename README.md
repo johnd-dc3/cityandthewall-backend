@@ -1,5 +1,30 @@
 This project is based on the tutorial here: https://www.prisma.io/blog/nestjs-prisma-rest-api-7D056s1BmOL0
 
+## Running the app
+
+```bash
+# development
+npm run start
+
+# swagger api (in browser)
+http://localhost:3000/api
+
+# prototype migration
+npx prisma db push
+
+# seed database
+npx prisma db seed
+
+# generate resource
+npx nest generate resource
+
+# watch mode
+npm run start:dev
+
+# production mode
+npm run start:prod
+```
+
 # Overall steps:
 ## Build REST API
 - Create empty project from CLI: `npx @nestjs/cli new <project-name>`
@@ -9,7 +34,7 @@ This project is based on the tutorial here: https://www.prisma.io/blog/nestjs-pr
 - ~~Run docker: `docker-compose up`~~
 - `npm install -D prisma`
 - `npx prisma init`
-- Set postgres database url string in .env
+- Set postgres database url string in .env (REF: https://www.prisma.io/docs/concepts/database-connectors/postgresql#connection-url)
 - Model the data under prisma/schema.prisma
 - Migrate the database (this creates actual tables in the database): `npx prisma migrate dev --name "init"`
 - Create seed script (seed.ts) to generate inital database data
@@ -20,22 +45,31 @@ npx nest generate module prisma
 npx nest generate service prisma
 ```
 - Install Swagger (`npm install --save @nestjs/swagger swagger-ui-express`) and set it up indside main.ts
-- Generate REST resources: (`npx nest generate resource`) for articles
-- Add Prisma to articles.module.ts and articles.service.ts
-- Define GET /articles endpoint. (You can test directly on http://localhost:3000/api)
-- Define GET /articles/drafts endpoint
-- Define GET /articles/:id endpoint
-- Define POST /articles endpoint
-- Define PATCH /articles/:id endpoint
-- Define DELETE /articles/:id endpoint
+- Generate REST resources: (`npx nest generate resource`) for posts
+- Add Prisma to posts.module.ts and posts.service.ts
+- Define GET /posts endpoint. (You can test directly on http://localhost:3000/api)
+- Define GET /posts/drafts endpoint
+- Define GET /posts/:id endpoint
+- Define POST /posts endpoint
+- Define PATCH /posts/:id endpoint
+- Define DELETE /posts/:id endpoint
 - Group endpoints together in Swagger
 - Update Swagger response types
 
+## Input Validation
+- Install `npm install class-validator class-transformer`
 
 
+## Alter the database
+- Make changes to prisma.schema and push prototype via `npx prisma db push`
+- Note: Changing the name of a model requires change all related files in the application, and will drop the original tables when migrating
+- Seed with new entries
+- Add more models (e.g.: User) to prisma.schema
+- Generate resources: `npx nest generate resource`
 
 # Environment tips
 - Prevent "Delete 'CR' eslint(prettier/prettier)" lint: add `"endOfLine": "auto"` to prettier.rc
+- Word wrap shortcut: Alt + z
 - Make sure prettier config overrides settings.json by adding a .vscode/settings.json and the following lines to it:
 ```
 {
@@ -69,23 +103,43 @@ Injection: https://blog.devgenius.io/exploring-nest-js-dependency-injection-66a6
 Classes: https://www.freecodecamp.org/news/javascript-classes-how-they-work-with-use-case/
 Singleton: https://www.freecodecamp.org/news/singleton-design-pattern-with-javascript/
 
-**/articles**
-### articles.controllers.ts
+**/schema**
+### schema.prisma
+Ref:  
+Models: https://www.prisma.io/docs/concepts/components/prisma-schema/data-model
+DB Prototyping: https://www.prisma.io/docs/guides/migrate/prototyping-schema-db-push
+
+
+**/posts**
+### posts.controllers.ts
 A controller's purpose is to receive specific requests for the application. The routing mechanism controls which controller receives which requests. Frequently, each controller has more than one route, and different routes can perform different actions.
 - Note that methods called are imported from the services file.  
-- `constructor(private readonly articlesService: ArticlesService) {}` injects the service into the class. Note that we are typing the argument with the `ArticlesService` type  
+- `constructor(private readonly postsService: PostsService) {}` injects the service into the class. Note that we are typing the argument with the `PostsService` type  
 - Note that @Req decorator doesn't need to be passed to methods such as FindAll(), Nest will automatically get the request data, because it it a GET request.
 - @Body is required for posting because the create() method needs to pass the client params to the service
 - If using Typescript you need to define the DTO (data transfer object); it will define how the data is sent over the network
-- Note that that plus symbol in `return this.articlesService.findOne(+id);` from the FindOne() method converts the string into a number
+- Note that that plus symbol in `return this.postsService.findOne(+id);` from the FindOne() method converts the string into a number
 
 *ApiTags
 Refs: https://docs.nestjs.com/controllers
 
-### articles.service.ts
+### posts.service.ts
 Ref: https://docs.nestjs.com/providers
 
+### post.entity.ts
+Define and entity that Swagger can use to identify the shape of the returned entity object. Without this, the Response Description section in swagger will be blank. So for this app, that's all the entity file is doing: defining the response types.
+Ref: https://www.prisma.io/blog/nestjs-prisma-rest-api-7D056s1BmOL0 (ctrl + f "entity")
 
+Properties need to be wrapped in the ApiProperty() decorator in the entity file, and the class created in the entity file will be used in the controller file as well.
+
+Note that entities have a use even outside Swagger. They can be used to define create new instances of the response object in the controller file.
+An example might be to use serialization in the entity file to filter response results. Ref: https://docs.nestjs.com/techniques/serialization
+
+Post.entity.ts exports a **class**
+Q: How are classes used in typescript?
+
+### /dto/create-post.dto.ts
+A Data Transfer Oject is used to specify the type of data that will be sent over the network. This is where incoming data validation is assigned.
 
 
 
@@ -124,19 +178,6 @@ Ref: https://docs.nestjs.com/providers
 $ npm install
 ```
 
-## Running the app
-
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
 ## Test
 
 ```bash
@@ -163,3 +204,4 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+

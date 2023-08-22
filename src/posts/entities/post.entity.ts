@@ -1,9 +1,10 @@
-// src/articles/entities/article.entity.ts
-
-import { Article } from '@prisma/client';
+import { Post } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ArticleEntity implements Article {
+export class PostEntity implements Post {
+  @ApiProperty({ required: false, nullable: true })
+  authorId: number | null;
+
   @ApiProperty()
   id: number;
 
