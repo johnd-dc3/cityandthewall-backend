@@ -7,6 +7,9 @@ export class UserEntity implements User {
   constructor(partial: Partial<UserEntity>) {
     Object.assign(this, partial);
   }
+  image: string;
+
+  emailVerified: Date;
 
   @ApiProperty()
   id: number;

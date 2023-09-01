@@ -34,7 +34,7 @@ export class CreatePostDto {
   published?: boolean = false;
 
   @IsOptional()
-  @ApiProperty({ required: false, default: false })
+  @ApiProperty({ required: false, default: null })
   authorId: number;
 
   @IsOptional()
