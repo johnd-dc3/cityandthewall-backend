@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CategoryEntity } from 'src/categories/entities/category.entity';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -31,4 +32,12 @@ export class CreatePostDto {
   @IsOptional()
   @ApiProperty({ required: false, default: false })
   published?: boolean = false;
+
+  @IsOptional()
+  @ApiProperty({ required: false, default: null })
+  authorId: number;
+
+  @IsOptional()
+  @ApiProperty()
+  categories?: any;
 }

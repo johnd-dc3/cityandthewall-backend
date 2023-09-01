@@ -3,88 +3,54 @@ import { PrismaClient } from '@prisma/client';
 // initialize the Prisma Client
 const prisma = new PrismaClient();
 async function main() {
-  // Create methods for user
-  // This query will NOT create the user if it already exists
-  // If the user exists, it will update it
-  const user1 = await prisma.user.upsert({
-    where: { email: 'sabin@adams.com' },
-    update: {},
-    create: {
-      email: 'sabin@adams.com',
-      name: 'Sabine Adams',
-      password: 'password-sabin',
-    },
-  });
+  const categoriesToCreate = [
+    { name: 'Random' },
+    { name: 'Leisure' },
+    { name: 'Kid Stuff' },
+    { name: 'Travel' },
+    // Add more category objects as needed
+  ];
 
-  const user2 = await prisma.user.upsert({
-    where: { email: 'billy@gmail.com' },
-    update: {},
-    create: {
-      email: 'billy@gmail.com',
-      name: 'billy bo',
-      password: 'password-billy',
-    },
-  });
+  const createdCategories = await Promise.all(
+    categoriesToCreate.map((categoryData) =>
+      prisma.category.upsert({
+        where: { name: categoryData.name },
+        update: {},
+        create: categoryData,
+      }),
+    ),
+  );
 
-  try {
-    const cat1 = await prisma.category.create({
-      data: {
-        name: 'Travel',
-      },
-    });
-  } catch (e) {
-    console.log(e);
-  }
-
-  // Note that running this query multiple times will result in error, as email as a @unique constraint
-  // const newUser = await prisma.user.create({
-  //   data: {
-  //     name: 'John Doe',
-  //     email: 'johndoe@example.com',
-  //     password: 'password123',
-  //   },
-  // });
-
-  // console.log('Created user:', newUser);
-
-  // Update user
-  // const updatedUser = await prisma.user.update({
-  //   where: { email: 'johndoe@example.com' },
-  //   data: {
-  //     name: 'Updated Name',
-  //   },
-  // });
-
-  // console.log('Updated User:', updatedUser);
-
-  // Read user by ID
-  // const userById = await prisma.user.findUnique({
-  //   where: { email: 'johndoe@example.com' }, // Id of newUser above
-  // });
-
-  // Delete user
-  // const deletedUser = await prisma.user.delete({
-  //   where: { email: 'johndoe@example.com' },
-  // });
-
-  // console.log('Deleted user:', deletedUser);
-
-  // create dummy post
-  const post1 = await prisma.post.upsert({
-    where: { title: 'Prisma Adds Support for MongoDB' },
+  await prisma.post.upsert({
+    where: { title: 'test post 1' },
     update: {
-      published: false,
+      authorId: 1,
+      categories: {
+        connect: [{ name: 'Travel' }],
+      },
     },
     create: {
-      title: 'Prisma Adds Support for MongoDB',
+      title: 'test post 1',
       body: 'Support for MongoDB has been one of the most requested features since the initial release of...',
       description:
         "We are excited to share that today's Prisma ORM release adds stable support for MongoDB!",
-      published: false,
+      published: true,
+      categories: {
+        connect: [{ name: 'Travel' }],
+      },
+      authorId: 1,
+    },
+    include: {
+      categories: true,
     },
   });
 
-  console.log('Post 1:', post1);
+  const allUsers = await prisma.post.findMany({
+    include: {
+      categories: true,
+    },
+  });
+  console.log(allUsers);
 }
 
 // execute the main function

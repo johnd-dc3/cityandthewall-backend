@@ -1,0 +1,159 @@
+import { PrismaClient } from '@prisma/client';
+
+// initialize the Prisma Client
+const prisma = new PrismaClient();
+async function main() {
+  // UPSERT
+  // Create methods for user
+  // This query will NOT create the user if it already exists
+  // If the user exists, it will update it
+  const user1 = await prisma.user.upsert({
+    where: { email: 'sabin@adams.com' },
+    update: {},
+    create: {
+      email: 'sabin@adams.com',
+      name: 'Sabine Adams',
+      password: 'password-sabin',
+    },
+  });
+
+  // UPSERT WITH SELECT
+  // NOTE: fetching post data will NOT automatically fetch related fields like categories.
+  // To see categories in the fetch, you must use 'select' or 'include. If you use 'select', ONLY those properties listed will be fetched
+  const post1 = await prisma.post.upsert({
+    where: { id: 8 },
+    update: {
+      authorId: 1,
+      categories: {
+        connect: [{ name: 'Travel' }],
+      },
+    },
+    create: {
+      title: 'Prisma Adds Support for MongoDB',
+      body: 'Support for MongoDB has been one of the most requested features since the initial release of...',
+      description:
+        "We are excited to share that today's Prisma ORM release adds stable support for MongoDB!",
+      published: false,
+    },
+    select: {
+      // Specify the properties you want to select
+      title: true,
+      body: true,
+      description: true,
+      published: true,
+      categories: true, // Include the categories property
+    },
+  });
+
+  console.log('Post 1:', post1);
+}
+
+// UPSERT WITH INCLUDE
+// Identical to the above, but use 'include' to show all fields, plus the categories field
+const post2 = await prisma.post.upsert({
+  where: { id: 8 },
+  update: {
+    authorId: 1,
+    categories: {
+      connect: [{ name: 'Travel' }],
+    },
+  },
+  create: {
+    title: 'Prisma Adds Support for MongoDB',
+    body: 'Support for MongoDB has been one of the most requested features since the initial release of...',
+    description:
+      "We are excited to share that today's Prisma ORM release adds stable support for MongoDB!",
+    published: false,
+  },
+  select: {
+    // Specify the properties you want to select
+    title: true,
+    body: true,
+    description: true,
+    published: true,
+    categories: true, // Include the categories property
+  },
+});
+
+console.log('Post 1:', post2);
+
+// CREATE
+// Note that in the schema, email is unique field, and will result in an error if another user has this field
+// Bette to wrap create() in try...catch block (see below) for error handling
+const newUser = await prisma.user.create({
+  data: {
+    name: 'John Doe',
+    email: 'johndoe@example.com',
+    password: 'password123',
+  },
+});
+
+console.log('Created user:', newUser);
+
+// CREATE WITH TRY...CATCH
+// Wrap in try...catch block so if an error occurs it does not prevent the rest of the code below from running
+try {
+  const cat1 = await prisma.category.create({
+    data: {
+      name: 'Travel',
+    },
+  });
+} catch (e) {
+  console.log(e);
+}
+
+// CREATE MULTIPLE RECORDS WITH Promise.all()
+  const categoriesToCreate = [
+    { name: 'Random' },
+    { name: 'Leisure' },
+    { name: 'Kid Stuff' },
+    // Add more category objects as needed
+  ];
+
+  const createdCategories = await Promise.all(
+    categoriesToCreate.map((categoryData) =>
+      prisma.category.upsert({
+        where: { name: categoryData.name },
+        update: {},
+        create: categoryData,
+      }),
+    ),
+  );
+
+// UPDATE
+const updatedUser = await prisma.user.update({
+  where: { email: 'johndoe@example.com' },
+  data: {
+    name: 'Updated Name',
+  },
+});
+
+console.log('Updated User:', updatedUser);
+
+// FIND UNIQUE
+// Read user by ID
+const userById = await prisma.user.findUnique({
+  where: { email: 'johndoe@example.com' }, // Id of newUser above
+});
+
+// FIND ALL
+const allUsers = await prisma.user.findMany();
+console.log(allUsers);
+
+// DELETE
+const deletedUser = await prisma.user.delete({
+  where: { email: 'johndoe@example.com' },
+});
+
+console.log('Deleted user:', deletedUser);
+
+// execute the main function
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    // close the Prisma Client at the end
+    await prisma.$disconnect();
+  });
